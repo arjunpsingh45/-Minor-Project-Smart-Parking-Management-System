@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | ParkVerse</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+:root{
+  --bg:#080b14;
+  --card:#131a2c;
+  --card-bd:rgba(255,255,255,.08);
+  --primary:#7c5cff;
+  --primary2:#22d3ee;
+  --accent:#2ee6a6;
+  --danger:#ff5c72;
+  --text:#eef1f8;
+  --muted:#8a93ab;
+  --radius:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{
+  background:var(--bg);color:var(--text);min-height:100vh;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;padding:20px;
+}
+.glow{position:fixed;border-radius:50%;filter:blur(130px);opacity:.35;z-index:0}
+.glow1{width:480px;height:480px;background:var(--primary);top:-140px;left:-140px}
+.glow2{width:480px;height:480px;background:var(--primary2);bottom:-140px;right:-140px}
+
+.back-link{position:fixed;top:22px;left:26px;color:var(--muted);text-decoration:none;font-size:14px;display:flex;align-items:center;gap:6px;z-index:2;transition:.25s}
+.back-link:hover{color:var(--primary2)}
+
+.card{
+  position:relative;z-index:1;width:100%;max-width:400px;
+  background:var(--card);border:1px solid var(--card-bd);border-radius:var(--radius);
+  padding:34px 30px;backdrop-filter:blur(16px);
+  box-shadow:0 25px 60px rgba(0,0,0,.45);
+  animation:popup .5s ease;
+}
+@keyframes popup{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.brand{display:flex;align-items:center;justify-content:center;gap:8px;font-size:20px;font-weight:700;margin-bottom:6px}
+.brand i{color:var(--primary2)}
+.brand span{background:linear-gradient(90deg,var(--primary),var(--primary2));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+h1{text-align:center;font-size:24px;margin:10px 0 4px}
+.sub{text-align:center;color:var(--muted);font-size:13.5px;margin-bottom:24px}
+
+.field{position:relative;margin-bottom:16px}
+.field i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px}
+.field input{
+  width:100%;padding:13px 14px 13px 40px;border-radius:10px;
+  border:1px solid var(--card-bd);background:#0d1424;color:var(--text);
+  outline:none;font-size:14px;transition:.25s;
+}
+.field input:focus{border-color:var(--primary2);box-shadow:0 0 0 3px rgba(34,211,238,.12)}
+.field input::placeholder{color:var(--muted)}
+.toggle-eye{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--muted);cursor:pointer;font-size:14px}
+
+.row-between{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;font-size:13px}
+.row-between label{display:flex;align-items:center;gap:6px;color:var(--muted)}
+.row-between a{color:var(--primary2);text-decoration:none}
+.row-between a:hover{text-decoration:underline}
+
+button.submit{
+  width:100%;padding:14px;border:none;border-radius:10px;cursor:pointer;
+  background:linear-gradient(90deg,var(--primary),var(--primary2));color:#fff;
+  font-size:15px;font-weight:600;transition:.3s;box-shadow:0 10px 24px rgba(124,92,255,.35);
+}
+button.submit:hover{transform:translateY(-2px)}
+button.submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+.msg{margin-top:14px;text-align:center;font-size:13.5px;font-weight:600;min-height:18px}
+.msg.ok{color:var(--accent)}
+.msg.err{color:var(--danger)}
+
+.bottom-text{text-align:center;margin-top:20px;color:var(--muted);font-size:13.5px}
+.bottom-text a{color:var(--primary2);text-decoration:none;font-weight:600}
+.bottom-text a:hover{text-decoration:underline}
+
+.divider{display:flex;align-items:center;gap:10px;margin:20px 0;color:var(--muted);font-size:12px}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--card-bd)}
+</style>
+</head>
+<body>
+
+<div class="glow glow1"></div>
+<div class="glow glow2"></div>
+
+<a href="/" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+
+<div class="card">
+<div class="brand"><i class="fa-solid fa-square-parking"></i><span>ParkVerse</span></div>
+<h1>Welcome Back</h1>
+<p class="sub">Login to book and manage your parking slots</p>
+
+<div class="field">
+<i class="fa-solid fa-envelope"></i>
+<input type="email" id="email" placeholder="Email Address" autocomplete="email">
+</div>
+
+<div class="field">
+<i class="fa-solid fa-lock"></i>
+<input type="password" id="password" placeholder="Password" autocomplete="current-password">
+<i class="fa-solid fa-eye toggle-eye" onclick="togglePass('password',this)"></i>
+</div>
+
+<div class="row-between">
+<label><input type="checkbox" id="remember" style="accent-color:var(--primary2)"> Remember Me</label>
+<a href="#">Forgot Password?</a>
+</div>
+
+<button class="submit" id="loginBtn" onclick="doLogin()">Login</button>
+
+<div class="msg" id="loginMsg"></div>
+
+<div class="divider">OR</div>
+
+<p class="bottom-text">Don't have an account? <a href="/signup">Sign Up</a></p>
+<p class="bottom-text" style="margin-top:8px;font-size:12px"><a href="/admin-login" style="color:var(--muted)">Admin Login</a></p>
+</div>
+
+<script>
+let csrfToken = '';
+async function loadCsrf(){
+  try{
+    const res = await fetch('/api/csrf-token');
+    const data = await res.json();
+    csrfToken = data.csrf_token;
+  }catch(e){ /* non-fatal */ }
+}
+loadCsrf();
+
+function togglePass(id, el){
+  const inp = document.getElementById(id);
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  el.classList.toggle('fa-eye');
+  el.classList.toggle('fa-eye-slash');
+}
+
+async function doLogin(){
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const msg = document.getElementById('loginMsg');
+  const btn = document.getElementById('loginBtn');
+
+  msg.className = 'msg';
+  msg.textContent = '';
+
+  if(!email || !password){
+    msg.textContent = 'Please fill in all fields';
+    msg.classList.add('err');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Logging in...';
+
+  try{
+    const res = await fetch('/api/login', {
+      method:'POST',
+      headers:{'Content-Type':'application/json', 'X-CSRFToken': csrfToken},
+      body: JSON.stringify({email, password})
+    });
+    const data = await res.json();
+
+    if(data.success){
+      msg.textContent = `Welcome ${data.name}! Redirecting...`;
+      msg.classList.add('ok');
+      setTimeout(()=> window.location.href = data.redirect || '/booking', 700);
+    }else{
+      msg.textContent = data.message || 'Login failed';
+      msg.classList.add('err');
+      btn.disabled = false;
+      btn.textContent = 'Login';
+    }
+  }catch(e){
+    msg.textContent = 'Something went wrong. Try again.';
+    msg.classList.add('err');
+    btn.disabled = false;
+    btn.textContent = 'Login';
+  }
+}
+
+document.getElementById('password').addEventListener('keydown', e=>{
+  if(e.key === 'Enter') doLogin();
+});
+</script>
+</body>
+</html>

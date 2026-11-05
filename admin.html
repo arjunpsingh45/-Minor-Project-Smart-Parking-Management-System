@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Console | ParkVerse</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+:root{
+  --bg:#080b14;
+  --card:#131a2c;
+  --card-bd:rgba(255,255,255,.08);
+  --primary:#ff9f43;
+  --primary2:#ff5c72;
+  --accent:#2ee6a6;
+  --info:#22d3ee;
+  --danger:#ff5c72;
+  --text:#eef1f8;
+  --muted:#8a93ab;
+  --radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-thumb{background:var(--primary);border-radius:20px}
+
+.topbar{
+  position:sticky;top:0;z-index:99;background:rgba(8,11,20,.85);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--card-bd);padding:14px 5%;display:flex;justify-content:space-between;align-items:center;
+}
+.logo{font-size:19px;font-weight:700;display:flex;align-items:center;gap:8px}
+.logo i{color:var(--primary)}
+.logo span{background:linear-gradient(90deg,var(--primary),var(--primary2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logout-btn{background:transparent;border:1px solid var(--card-bd);color:var(--muted);padding:8px 14px;border-radius:30px;cursor:pointer;font-size:13px;transition:.25s}
+.logout-btn:hover{border-color:var(--danger);color:var(--danger)}
+
+.wrap{max-width:1300px;margin:0 auto;padding:26px 5% 60px}
+
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--card-bd);border-radius:14px;padding:18px;transition:.3s}
+.stat-card:hover{transform:translateY(-4px);border-color:var(--primary)}
+.stat-card i{font-size:20px;color:var(--primary);margin-bottom:8px}
+.stat-card h2{font-size:22px;font-weight:800}
+.stat-card p{color:var(--muted);font-size:12px;margin-top:2px}
+
+.tabs{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.tab-btn{background:var(--card);border:1px solid var(--card-bd);color:var(--muted);padding:10px 18px;border-radius:30px;font-size:13.5px;cursor:pointer;transition:.25s}
+.tab-btn.active{background:linear-gradient(90deg,var(--primary),var(--primary2));color:#fff;border-color:transparent}
+
+.panel{background:var(--card);border:1px solid var(--card-bd);border-radius:var(--radius);padding:22px;display:none}
+.panel.active{display:block}
+.panel h3{font-size:16.5px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.panel h3 i{color:var(--primary)}
+.panel .desc{color:var(--muted);font-size:12.5px;margin-bottom:18px}
+
+/* add slot form */
+.add-slot-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.add-slot-row input{flex:1;min-width:140px;padding:11px 14px;border-radius:10px;border:1px solid var(--card-bd);background:#0d1424;color:var(--text);outline:none;font-size:13.5px}
+.add-slot-row label{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted)}
+.add-slot-row button{background:linear-gradient(90deg,var(--primary),var(--primary2));border:none;color:#fff;padding:11px 18px;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:600;transition:.25s}
+.add-slot-row button:hover{transform:translateY(-2px)}
+
+.slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.slot-card{background:#0d1424;border:1px solid var(--card-bd);border-radius:12px;padding:12px;font-size:12.5px;position:relative}
+.slot-card .name{font-weight:700;font-size:14px;margin-bottom:4px}
+.slot-card .status{font-size:11px;padding:3px 8px;border-radius:20px;display:inline-block;margin-bottom:8px}
+.slot-card .status.avail{background:rgba(46,230,166,.15);color:var(--accent)}
+.slot-card .status.booked{background:rgba(255,92,114,.15);color:var(--danger)}
+.slot-card .actions{display:flex;gap:6px;margin-top:6px}
+.slot-card .actions button{flex:1;font-size:10.5px;padding:6px 4px;border-radius:6px;border:1px solid var(--card-bd);background:transparent;color:var(--muted);cursor:pointer;transition:.2s}
+.slot-card .actions button:hover{border-color:var(--primary);color:var(--primary)}
+.slot-card .lift-tag{position:absolute;top:10px;right:10px;color:#ffd166;font-size:12px}
+
+/* table */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;padding:10px 12px;border-bottom:1px solid var(--card-bd)}
+td{padding:12px;border-bottom:1px solid var(--card-bd)}
+tr:hover td{background:#0d1424}
+.badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge.el{background:rgba(255,209,102,.15);color:#ffd166}
+.badge.price{background:rgba(46,230,166,.15);color:var(--accent)}
+.mini-cancel{background:rgba(255,92,114,.12);color:var(--danger);border:1px solid rgba(255,92,114,.3);padding:5px 12px;border-radius:20px;font-size:11.5px;cursor:pointer;transition:.2s}
+.mini-cancel:hover{background:var(--danger);color:#fff}
+.empty-state{text-align:center;color:var(--muted);font-size:13px;padding:24px 0}
+.table-wrap{overflow-x:auto}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--card);border:1px solid var(--accent);color:var(--accent);padding:12px 18px;border-radius:10px;font-size:13px;z-index:500;display:none;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.toast.show{display:block;animation:popup .3s ease}
+@keyframes popup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+<div class="logo"><i class="fa-solid fa-user-shield"></i><span>ParkVerse Admin</span></div>
+<button class="logout-btn" onclick="window.location.href='/logout'"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+</div>
+
+<div class="wrap">
+
+<div class="stats-row" id="statsRow">
+<div class="stat-card"><i class="fa-solid fa-square-parking"></i><h2 id="sTotal">--</h2><p>Total Slots</p></div>
+<div class="stat-card"><i class="fa-solid fa-circle-check"></i><h2 id="sAvail">--</h2><p>Available</p></div>
+<div class="stat-card"><i class="fa-solid fa-circle-xmark"></i><h2 id="sBooked">--</h2><p>Booked</p></div>
+<div class="stat-card"><i class="fa-solid fa-users"></i><h2 id="sUsers">--</h2><p>Registered Users</p></div>
+<div class="stat-card"><i class="fa-solid fa-indian-rupee-sign"></i><h2 id="sRevenue">--</h2><p>Active Revenue</p></div>
+</div>
+
+<div class="tabs">
+<button class="tab-btn active" data-tab="slots" onclick="switchTab('slots')"><i class="fa-solid fa-grip"></i> Manage Slots</button>
+<button class="tab-btn" data-tab="bookings" onclick="switchTab('bookings')"><i class="fa-solid fa-receipt"></i> Bookings</button>
+<button class="tab-btn" data-tab="users" onclick="switchTab('users')"><i class="fa-solid fa-users"></i> Users</button>
+</div>
+
+<!-- SLOTS TAB -->
+<div class="panel active" id="panel-slots">
+<h3><i class="fa-solid fa-grip"></i> Parking Slots</h3>
+<p class="desc">Add, remove, or toggle elevator-proximity for any slot</p>
+
+<div class="add-slot-row">
+<input type="text" id="newSlotName" placeholder="New slot name e.g. P-21">
+<label><input type="checkbox" id="newSlotElevator" style="accent-color:var(--primary)"> Near Elevator</label>
+<button onclick="addSlot()"><i class="fa-solid fa-plus"></i> Add Slot</button>
+</div>
+
+<div class="slot-grid" id="slotGrid"><p class="empty-state">Loading...</p></div>
+</div>
+
+<!-- BOOKINGS TAB -->
+<div class="panel" id="panel-bookings">
+<h3><i class="fa-solid fa-receipt"></i> Active Bookings</h3>
+<p class="desc">All current reservations across every user</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Slot</th><th>User</th><th>Place</th><th>Time</th><th>Duration</th><th>Price</th><th></th></tr></thead>
+<tbody id="bookingsBody"><tr><td colspan="7" class="empty-state">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+
+<!-- USERS TAB -->
+<div class="panel" id="panel-users">
+<h3><i class="fa-solid fa-users"></i> Registered Users</h3>
+<p class="desc">Everyone who has signed up on ParkVerse</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Car Number</th><th>Vehicle Class</th></tr></thead>
+<tbody id="usersBody"><tr><td colspan="5" class="empty-state">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let csrfToken = '';
+async function loadCsrf(){
+  try{
+    const res = await fetch('/api/csrf-token');
+    const data = await res.json();
+    csrfToken = data.csrf_token;
+  }catch(e){}
+}
+
+function showToast(text){
+  const t = document.getElementById('toast');
+  t.textContent = text;
+  t.classList.add('show');
+  setTimeout(()=> t.classList.remove('show'), 2500);
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+
+async function loadOverview(){
+  const res = await fetch('/api/admin/overview');
+  if(res.status === 403){
+    window.location.href = '/admin-login';
+    return;
+  }
+  const data = await res.json();
+
+  document.getElementById('sTotal').textContent = data.stats.total_slots;
+  document.getElementById('sAvail').textContent = data.stats.available_slots;
+  document.getElementById('sBooked').textContent = data.stats.booked_slots;
+  document.getElementById('sUsers').textContent = data.stats.total_users;
+  document.getElementById('sRevenue').textContent = '₹' + data.stats.revenue;
+
+  renderSlots(data.slots);
+  renderBookings(data.bookings);
+  renderUsers(data.users);
+}
+
+function renderSlots(slots){
+  const grid = document.getElementById('slotGrid');
+  if(slots.length === 0){
+    grid.innerHTML = '<p class="empty-state">No slots yet — add one above</p>';
+    return;
+  }
+  grid.innerHTML = slots.map(s => `
+    <div class="slot-card">
+      ${s.near_elevator ? '<i class="fa-solid fa-elevator lift-tag" title="Near Elevator"></i>' : ''}
+      <div class="name">${s.slot}</div>
+      <span class="status ${s.status==='Booked'?'booked':'avail'}">${s.status}</span>
+      <div class="actions">
+        <button onclick="toggleElevator(${s.id})">Toggle Lift</button>
+        <button onclick="deleteSlot(${s.id})" style="color:var(--danger)">Remove</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderBookings(bookings){
+  const body = document.getElementById('bookingsBody');
+  if(bookings.length === 0){
+    body.innerHTML = '<tr><td colspan="7" class="empty-state">No active bookings</td></tr>';
+    return;
+  }
+  body.innerHTML = bookings.map(b => `
+    <tr>
+      <td><b>${b.slot_name}</b> ${b.near_elevator ? '<span class="badge el">Lift</span>' : ''}</td>
+      <td>${b.user_email}</td>
+      <td>${b.place}</td>
+      <td>${new Date(b.time).toLocaleString()}</td>
+      <td>${b.duration}h</td>
+      <td><span class="badge price">₹${b.price}</span></td>
+      <td><button class="mini-cancel" onclick="cancelBooking(${b.id})">Cancel</button></td>
+    </tr>
+  `).join('');
+}
+
+function renderUsers(users){
+  const body = document.getElementById('usersBody');
+  if(users.length === 0){
+    body.innerHTML = '<tr><td colspan="5" class="empty-state">No users yet</td></tr>';
+    return;
+  }
+  body.innerHTML = users.map(u => `
+    <tr>
+      <td>${u.name}</td>
+      <td>${u.email}</td>
+      <td>${u.mobile}</td>
+      <td>${u.car_num}</td>
+      <td>${u.vehicle_class || '-'}</td>
+    </tr>
+  `).join('');
+}
+
+async function addSlot(){
+  const name = document.getElementById('newSlotName').value.trim();
+  const elevator = document.getElementById('newSlotElevator').checked;
+  if(!name){ showToast('Enter a slot name first'); return; }
+
+  const res = await fetch('/api/admin/slot/add', {
+    method:'POST',
+    headers:{'Content-Type':'application/json', 'X-CSRFToken': csrfToken},
+    body: JSON.stringify({slot_name: name, near_elevator: elevator})
+  });
+  const data = await res.json();
+  showToast(data.message);
+  if(data.success){
+    document.getElementById('newSlotName').value = '';
+    document.getElementById('newSlotElevator').checked = false;
+    loadOverview();
+  }
+}
+
+async function deleteSlot(id){
+  const res = await fetch('/api/admin/slot/delete', {
+    method:'POST',
+    headers:{'Content-Type':'application/json', 'X-CSRFToken': csrfToken},
+    body: JSON.stringify({slot_id: id})
+  });
+  const data = await res.json();
+  showToast(data.message);
+  loadOverview();
+}
+
+async function toggleElevator(id){
+  const res = await fetch('/api/admin/slot/toggle-elevator', {
+    method:'POST',
+    headers:{'Content-Type':'application/json', 'X-CSRFToken': csrfToken},
+    body: JSON.stringify({slot_id: id})
+  });
+  await res.json();
+  loadOverview();
+}
+
+async function cancelBooking(id){
+  const res = await fetch('/api/admin/booking/cancel', {
+    method:'POST',
+    headers:{'Content-Type':'application/json', 'X-CSRFToken': csrfToken},
+    body: JSON.stringify({booking_id: id})
+  });
+  const data = await res.json();
+  showToast(data.message);
+  loadOverview();
+}
+
+(async function init(){
+  await loadCsrf();
+  await loadOverview();
+  setInterval(loadOverview, 20000);
+})();
+</script>
+</body>
+</html>

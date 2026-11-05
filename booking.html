@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book a Slot | ParkVerse</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+:root{
+  --bg:#080b14;
+  --bg2:#0d1220;
+  --card:#131a2c;
+  --card-bd:rgba(255,255,255,.08);
+  --primary:#7c5cff;
+  --primary2:#22d3ee;
+  --accent:#2ee6a6;
+  --danger:#ff5c72;
+  --text:#eef1f8;
+  --muted:#8a93ab;
+  --radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-thumb{background:var(--primary);border-radius:20px}
+
+/* TOPBAR */
+.topbar{
+  position:sticky;top:0;z-index:99;background:rgba(8,11,20,.85);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--card-bd);padding:14px 5%;display:flex;justify-content:space-between;align-items:center;
+}
+.logo{font-size:19px;font-weight:700;display:flex;align-items:center;gap:8px}
+.logo i{color:var(--primary2)}
+.logo span{background:linear-gradient(90deg,var(--primary),var(--primary2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.topbar-right{display:flex;align-items:center;gap:14px}
+
+.bell-wrap{position:relative}
+.bell-btn{background:transparent;border:1px solid var(--card-bd);color:var(--text);width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:14px;position:relative;transition:.25s}
+.bell-btn:hover{border-color:var(--primary2);color:var(--primary2)}
+.bell-dot{position:absolute;top:6px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--danger);display:none}
+.bell-dot.show{display:block}
+.bell-panel{
+  position:absolute;top:48px;right:0;width:320px;max-height:380px;overflow-y:auto;
+  background:var(--card);border:1px solid var(--card-bd);border-radius:14px;padding:10px;
+  box-shadow:0 20px 50px rgba(0,0,0,.5);display:none;z-index:200;
+}
+.bell-panel.open{display:block;animation:popup .25s ease}
+.bell-panel h4{font-size:13px;padding:6px 8px;color:var(--muted)}
+.note-item{display:flex;gap:10px;padding:10px 8px;border-radius:10px;transition:.2s}
+.note-item:hover{background:#0d1424}
+.note-item i{margin-top:2px;color:var(--primary2);font-size:13px}
+.note-item .txt{font-size:12.5px;line-height:1.4}
+.note-item .time{color:var(--muted);font-size:10.5px;margin-top:3px}
+@keyframes popup{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+.user-chip{display:flex;align-items:center;gap:10px}
+.user-chip .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+.user-chip .info{font-size:12.5px;line-height:1.3}
+.user-chip .info b{font-size:13.5px}
+.user-chip .info span{color:var(--muted)}
+.logout-btn{margin-left:2px;background:transparent;border:1px solid var(--card-bd);color:var(--muted);padding:8px 14px;border-radius:30px;cursor:pointer;font-size:13px;transition:.25s}
+.logout-btn:hover{border-color:var(--danger);color:var(--danger)}
+
+.wrap{max-width:1300px;margin:0 auto;padding:26px 5% 60px}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--card-bd);border-radius:14px;padding:18px;transition:.3s}
+.stat-card:hover{transform:translateY(-4px);border-color:var(--primary)}
+.stat-card i{font-size:20px;color:var(--primary2);margin-bottom:8px}
+.stat-card h2{font-size:24px;font-weight:800}
+.stat-card p{color:var(--muted);font-size:12.5px;margin-top:2px}
+
+/* GRID LAYOUT */
+.main-grid{display:grid;grid-template-columns:1.1fr 1.5fr;gap:20px;align-items:start}
+@media(max-width:960px){.main-grid{grid-template-columns:1fr}}
+
+.panel{background:var(--card);border:1px solid var(--card-bd);border-radius:var(--radius);padding:22px}
+.panel h3{font-size:16.5px;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.panel h3 i{color:var(--primary2)}
+.panel .desc{color:var(--muted);font-size:12.5px;margin-bottom:18px}
+
+/* FORM */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px}
+.field select, .field input{
+  width:100%;padding:12px 14px;border-radius:10px;border:1px solid var(--card-bd);
+  background:#0d1424;color:var(--text);outline:none;font-size:13.5px;transition:.25s;
+}
+.field select:focus, .field input:focus{border-color:var(--primary2);box-shadow:0 0 0 3px rgba(34,211,238,.12)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.toggle-row{display:flex;align-items:center;justify-content:space-between;background:#0d1424;border:1px solid var(--card-bd);border-radius:10px;padding:12px 14px;margin-bottom:14px}
+.toggle-row .lbl{font-size:13.5px;display:flex;align-items:center;gap:8px}
+.toggle-row .lbl i{color:var(--primary2)}
+.toggle-row .lbl small{display:block;color:var(--muted);font-size:11px;font-weight:400}
+.switch{position:relative;width:44px;height:24px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider-toggle{position:absolute;cursor:pointer;inset:0;background:#2a3550;border-radius:30px;transition:.3s}
+.slider-toggle::before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s}
+input:checked + .slider-toggle{background:linear-gradient(90deg,var(--primary),var(--primary2))}
+input:checked + .slider-toggle::before{transform:translateX(20px)}
+
+.price-box{
+  display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(124,92,255,.12),rgba(34,211,238,.08));
+  border:1px solid var(--card-bd);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px;
+}
+.price-box b{font-size:19px;background:linear-gradient(90deg,var(--primary),var(--primary2));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.selected-slot-box{background:#0d1424;border:1px dashed var(--card-bd);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.selected-slot-box.active{border-color:var(--accent);color:var(--accent);border-style:solid}
+
+button.book-btn{
+  width:100%;padding:14px;border:none;border-radius:10px;cursor:pointer;
+  background:linear-gradient(90deg,var(--primary),var(--primary2));color:#fff;
+  font-size:14.5px;font-weight:600;transition:.3s;box-shadow:0 10px 24px rgba(124,92,255,.3);
+}
+button.book-btn:hover{transform:translateY(-2px)}
+button.book-btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.msg{margin-top:12px;text-align:center;font-size:13px;font-weight:600;min-height:16px}
+.msg.ok{color:var(--accent)}
+.msg.err{color:var(--danger)}
+
+/* SLOTS PANEL */
+.slots-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+.filter-chips{display:flex;gap:8px}
+.chip{background:#0d1424;border:1px solid var(--card-bd);color:var(--muted);padding:7px 14px;border-radius:30px;font-size:12.5px;cursor:pointer;transition:.25s}
+.chip.active{background:linear-gradient(90deg,var(--primary),var(--primary2));color:#fff;border-color:transparent}
+
+.legend{display:flex;gap:14px;margin-bottom:12px;font-size:11.5px;color:var(--muted);flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.dot{width:9px;height:9px;border-radius:3px;display:inline-block}
+.dot.a{background:var(--accent)}
+.dot.b{background:var(--danger)}
+.dot.s{background:var(--primary2)}
+.dot.l{background:#ffd166}
+
+/* SVG FLOOR PLAN */
+.floor-plan-wrap{background:#0d1424;border:1px solid var(--card-bd);border-radius:14px;padding:10px;overflow-x:auto}
+#floorPlan{display:block;margin:auto}
+.fp-slot{cursor:pointer;transition:.15s}
+.fp-slot:hover rect{filter:brightness(1.25)}
+.fp-slot text{pointer-events:none;font-family:'Poppins',sans-serif;font-weight:600}
+.fp-lift{fill:#1b2338;stroke:var(--card-bd)}
+
+/* MY BOOKINGS */
+.bookings-panel{margin-top:20px}
+.booking-item{
+  display:flex;justify-content:space-between;align-items:center;background:#0d1424;border:1px solid var(--card-bd);
+  border-radius:12px;padding:14px 16px;margin-bottom:10px;font-size:13px;flex-wrap:wrap;gap:8px;
+}
+.booking-item .left b{font-size:14px}
+.booking-item .left .meta{color:var(--muted);font-size:11.5px;margin-top:3px}
+.booking-item .price-tag{background:rgba(46,230,166,.12);color:var(--accent);padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;margin-right:8px}
+.cancel-btn{background:rgba(255,92,114,.12);color:var(--danger);border:1px solid rgba(255,92,114,.3);padding:7px 14px;border-radius:20px;font-size:12px;cursor:pointer;transition:.25s}
+.cancel-btn:hover{background:var(--danger);color:#fff}
+.empty-state{text-align:center;color:var(--muted);font-size:13px;padding:20px 0}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+<div class="logo"><i class="fa-solid fa-square-parking"></i><span>ParkVerse</span></div>
+<div class="topbar-right">
+
+<div class="bell-wrap">
+<button class="bell-btn" onclick="toggleBell()"><i class="fa-solid fa-bell"></i><span class="bell-dot" id="bellDot"></span></button>
+<div class="bell-panel" id="bellPanel">
+<h4>Notifications</h4>
+<div id="noteList"><p class="empty-state">No notifications yet</p></div>
+</div>
+</div>
+
+<div class="user-chip">
+<div class="avatar">{{ user_name[0]|upper if user_name else "U" }}</div>
+<div class="info"><b>{{ user_name }}</b><br><span>{{ car_num }}</span></div>
+<button class="logout-btn" onclick="window.location.href='/logout'"><i class="fa-solid fa-right-from-bracket"></i></button>
+</div>
+
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="stats-row" id="statsRow">
+<div class="stat-card"><i class="fa-solid fa-square-parking"></i><h2 id="totalSlots">--</h2><p>Total Slots</p></div>
+<div class="stat-card"><i class="fa-solid fa-circle-check"></i><h2 id="availSlots">--</h2><p>Available</p></div>
+<div class="stat-card"><i class="fa-solid fa-circle-xmark"></i><h2 id="bookedSlots">--</h2><p>Booked</p></div>
+<div class="stat-card"><i class="fa-solid fa-elevator"></i><h2 id="elevSlots">--</h2><p>Near Elevator (Free)</p></div>
+</div>
+
+<div class="main-grid">
+
+<!-- BOOKING FORM -->
+<div class="panel">
+<h3><i class="fa-solid fa-clipboard-list"></i> New Booking</h3>
+<p class="desc">Choose your place, time, duration and preference, then pick a slot</p>
+
+<div class="field">
+<label>Place / Zone</label>
+<select id="place">
+<option value="Block A - Ground Floor">Block A - Ground Floor</option>
+<option value="Block A - First Floor">Block A - First Floor</option>
+<option value="Block B - Ground Floor">Block B - Ground Floor</option>
+<option value="Block B - First Floor">Block B - First Floor</option>
+<option value="Rooftop Parking">Rooftop Parking</option>
+</select>
+</div>
+
+<div class="two-col">
+<div class="field">
+<label>Date & Time</label>
+<input type="datetime-local" id="bookingTime">
+</div>
+<div class="field">
+<label>Duration (hours)</label>
+<input type="number" id="duration" min="1" max="24" value="1" step="1">
+</div>
+</div>
+
+<div class="toggle-row">
+<div class="lbl"><i class="fa-solid fa-elevator"></i><div>Near Elevator / Lift<br><small>Show slots closer to the lift first</small></div></div>
+<label class="switch">
+<input type="checkbox" id="elevatorPref" onchange="applyFilter(this.checked ? 'near' : filterMode==='near'?'all':filterMode)">
+<span class="slider-toggle"></span>
+</label>
+</div>
+
+<div class="price-box">
+<span>Estimated Price (₹{{ rate_per_hour }}/hr)</span>
+<b id="priceDisplay">₹{{ rate_per_hour }}</b>
+</div>
+
+<div class="selected-slot-box" id="selectedBox"><i class="fa-solid fa-circle-info"></i> No slot selected yet — pick one from the floor plan</div>
+
+<button class="book-btn" id="bookBtn" onclick="confirmBooking()" disabled>Confirm Booking</button>
+<div class="msg" id="bookMsg"></div>
+</div>
+
+<!-- SLOTS -->
+<div class="panel">
+<div class="slots-head">
+<h3 style="margin-bottom:0"><i class="fa-solid fa-building"></i> Floor Plan — Select a Slot</h3>
+<div class="filter-chips">
+<button class="chip active" id="chipAll" onclick="applyFilter('all')">All</button>
+<button class="chip" id="chipNear" onclick="applyFilter('near')">Near Elevator</button>
+</div>
+</div>
+<div class="legend">
+<span><i class="dot a"></i> Available</span>
+<span><i class="dot b"></i> Booked</span>
+<span><i class="dot s"></i> Selected</span>
+<span><i class="dot l"></i> Lift / Elevator</span>
+</div>
+<div class="floor-plan-wrap">
+<svg id="floorPlan" width="100%" height="360" viewBox="0 0 720 360" xmlns="http://www.w3.org/2000/svg"></svg>
+</div>
+</div>
+
+</div>
+
+<!-- MY BOOKINGS -->
+<div class="panel bookings-panel">
+<h3><i class="fa-solid fa-receipt"></i> My Bookings</h3>
+<p class="desc">Slots you've currently reserved</p>
+<div id="myBookings"><p class="empty-state">Loading...</p></div>
+</div>
+
+</div>
+
+<script>
+let allSlots = [];
+let filterMode = 'all';
+let selectedSlotId = null;
+let selectedSlotName = null;
+const RATE_PER_HOUR = {{ rate_per_hour }};
+let csrfToken = '';
+
+async function loadCsrf(){
+  try{
+    const res = await fetch('/api/csrf-token');
+    const data = await res.json();
+    csrfToken = data.csrf_token;
+  }catch(e){ /* non-fatal */ }
+}
+
+async function loadDashboard(){
+  const res = await fetch('/api/dashboard');
+  const d = await res.json();
+  document.getElementById('totalSlots').textContent = d.total_slots;
+  document.getElementById('availSlots').textContent = d.available_slots;
+  document.getElementById('bookedSlots').textContent = d.booked_slots;
+  document.getElementById('elevSlots').textContent = d.elevator_free;
+}
+
+async function loadSlots(){
+  const res = await fetch('/api/slots');
+  allSlots = await res.json();
+  renderFloorPlan();
+}
+
+/* ============ SVG FLOOR PLAN ============
+   Slots are arranged in two rows either side of a central lift shaft.
+   Slots flagged near_elevator are placed in the inner columns (closest
+   to the lift icon); the rest fill the outer columns. */
+function renderFloorPlan(){
+  const svg = document.getElementById('floorPlan');
+  let list = allSlots;
+  if(filterMode === 'near') list = list.filter(s => s.near_elevator);
+
+  if(list.length === 0){
+    svg.innerHTML = `<text x="360" y="180" fill="var(--muted)" text-anchor="middle" font-size="14">No slots match this filter</text>`;
+    return;
+  }
+
+  const near = list.filter(s => s.near_elevator);
+  const far = list.filter(s => !s.near_elevator);
+  const ordered = near.concat(far); // near-elevator slots rendered closest to the shaft
+
+  const slotW = 70, slotH = 60, gapX = 10, gapY = 14;
+  const perRow = 5; // columns per side
+  const liftX = 330, liftW = 60;
+  const leftStartX = liftX - gapX - (perRow*(slotW+gapX));
+  const rightStartX = liftX + liftW + gapX;
+  const topY = 40;
+
+  let svgParts = [];
+
+  // lift shaft
+  svgParts.push(`<rect x="${liftX}" y="${topY}" width="${liftW}" height="${(slotH+gapY)*2}" rx="10" class="fp-lift" stroke-width="1.5"></rect>`);
+  svgParts.push(`<text x="${liftX+liftW/2}" y="${topY+(slotH+gapY)-4}" fill="#ffd166" text-anchor="middle" font-size="22">🛗</text>`);
+  svgParts.push(`<text x="${liftX+liftW/2}" y="${topY+(slotH+gapY)+16}" fill="var(--muted)" text-anchor="middle" font-size="10">LIFT</text>`);
+
+  ordered.forEach((s, i) => {
+    const side = i % 2 === 0 ? 'left' : 'right';
+    const rank = Math.floor(i / 2); // 0 = closest to lift
+    const col = perRow - 1 - Math.min(rank, perRow-1);
+    const row = Math.floor(rank / perRow);
+
+    let x;
+    if(side === 'left'){
+      x = leftStartX + col*(slotW+gapX);
+    }else{
+      x = rightStartX + (perRow-1-col)*(slotW+gapX);
+    }
+    const y = topY + row*(slotH+gapY);
+
+    let fill = 'rgba(46,230,166,.14)', stroke = 'rgba(46,230,166,.5)', textColor = '#2ee6a6';
+    if(s.status === 'Booked'){ fill='rgba(255,92,114,.14)'; stroke='rgba(255,92,114,.5)'; textColor='#ff8a9a'; }
+    if(selectedSlotId === s.id){ fill='url(#selGrad)'; stroke='transparent'; textColor='#fff'; }
+
+    const clickable = s.status === 'Booked' ? '' : `onclick="selectSlot(${s.id}, '${s.slot}')"`;
+    const cursor = s.status === 'Booked' ? 'not-allowed' : 'pointer';
+
+    svgParts.push(`
+      <g class="fp-slot" ${clickable} style="cursor:${cursor}">
+        <rect x="${x}" y="${y}" width="${slotW}" height="${slotH}" rx="9" fill="${fill}" stroke="${stroke}" stroke-width="1.4"></rect>
+        ${s.near_elevator ? `<circle cx="${x+slotW-10}" cy="${y+10}" r="4" fill="#ffd166"></circle>` : ''}
+        <text x="${x+slotW/2}" y="${y+slotH/2+5}" fill="${textColor}" text-anchor="middle" font-size="13">${s.slot}</text>
+      </g>
+    `);
+  });
+
+  svg.innerHTML = `<defs><linearGradient id="selGrad" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#7c5cff"></stop><stop offset="100%" stop-color="#22d3ee"></stop>
+  </linearGradient></defs>` + svgParts.join('');
+}
+
+function selectSlot(id, name){
+  selectedSlotId = id;
+  selectedSlotName = name;
+  renderFloorPlan();
+  const box = document.getElementById('selectedBox');
+  box.innerHTML = `<i class="fa-solid fa-circle-check"></i> Slot <b>${name}</b> selected`;
+  box.classList.add('active');
+  document.getElementById('bookBtn').disabled = false;
+}
+
+function applyFilter(mode){
+  filterMode = mode;
+  document.getElementById('chipAll').classList.toggle('active', mode==='all');
+  document.getElementById('chipNear').classList.toggle('active', mode==='near');
+  document.getElementById('elevatorPref').checked = (mode === 'near');
+  renderFloorPlan();
+}
+
+function updatePrice(){
+  let hrs = parseFloat(document.getElementById('duration').value) || 1;
+  hrs = Math.max(1, Math.min(hrs, 24));
+  document.getElementById('priceDisplay').textContent = '₹' + (hrs * RATE_PER_HOUR).toFixed(0);
+}
+document.getElementById('duration').addEventListener('input', updatePrice);
+
+async function confirmBooking(){
+  const place = document.getElementById('place').value;
+  const time = document.getElementById('bookingTime').value;
+  const duration = parseFloat(document.getElementById('duration').value) || 1;
+  const nearElevator = document.getElementById('elevatorPref').checked;
+  const msg = document.getElementById('bookMsg');
+  const btn = document.getElementById('bookBtn');
+
+  msg.className = 'msg';
+  msg.textContent = '';
+
+  if(!time){
+    msg.textContent = 'Please choose a date & time';
+    msg.classList.add('err');
+    return;
+  }
+  if(!selectedSlotId){
+    msg.textContent = 'Please select a slot';
+    msg.classList.add('err');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Booking...';
+
+  try{
+    const res = await fetch('/api/book', {
+      method:'POST',
+      headers:{'Content-Type':'application/json', 'X-CSRFToken': csrfToken},
+      body: JSON.stringify({slot_id: selectedSlotId, place, time, duration, near_elevator: nearElevator})
+    });
+    const data = await res.json();
+
+    if(data.success){
+      msg.textContent = data.message;
+      msg.classList.add('ok');
+      selectedSlotId = null;
+      document.getElementById('selectedBox').innerHTML = '<i class="fa-solid fa-circle-info"></i> No slot selected yet — pick one from the floor plan';
+      document.getElementById('selectedBox').classList.remove('active');
+      document.getElementById('bellDot').classList.add('show');
+      await Promise.all([loadDashboard(), loadSlots(), loadMyBookings(), loadNotifications()]);
+    }else{
+      msg.textContent = data.message;
+      msg.classList.add('err');
+    }
+  }catch(e){
+    msg.textContent = 'Something went wrong. Try again.';
+    msg.classList.add('err');
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Confirm Booking';
+}
+
+async function loadMyBookings(){
+  const res = await fetch('/api/my-bookings');
+  const bookings = await res.json();
+  const box = document.getElementById('myBookings');
+
+  if(bookings.length === 0){
+    box.innerHTML = '<p class="empty-state">You have no active bookings yet</p>';
+    return;
+  }
+
+  box.innerHTML = bookings.map(b => `
+    <div class="booking-item">
+      <div class="left">
+        <b>Slot ${b.slot_name}</b> ${b.near_elevator ? '<i class="fa-solid fa-elevator" style="color:var(--primary2);margin-left:6px" title="Near Elevator"></i>' : ''}
+        <div class="meta">${b.place} &nbsp;•&nbsp; ${new Date(b.time).toLocaleString()} &nbsp;•&nbsp; ${b.duration}h</div>
+      </div>
+      <div style="display:flex;align-items:center">
+        <span class="price-tag">₹${b.price}</span>
+        <button class="cancel-btn" onclick="cancelBooking(${b.slot_id})">Cancel</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function cancelBooking(slotId){
+  const res = await fetch('/api/cancel', {
+    method:'POST',
+    headers:{'Content-Type':'application/json', 'X-CSRFToken': csrfToken},
+    body: JSON.stringify({slot_id: slotId})
+  });
+  const data = await res.json();
+  if(data.success){
+    await Promise.all([loadDashboard(), loadSlots(), loadMyBookings(), loadNotifications()]);
+  }
+}
+
+/* ============ NOTIFICATIONS (mock email/SMS trail) ============ */
+async function loadNotifications(){
+  const res = await fetch('/api/notifications');
+  const notes = await res.json();
+  const list = document.getElementById('noteList');
+
+  if(notes.length === 0){
+    list.innerHTML = '<p class="empty-state">No notifications yet</p>';
+    return;
+  }
+
+  list.innerHTML = notes.map(n => `
+    <div class="note-item">
+      <i class="fa-solid ${n.channel === 'email' ? 'fa-envelope' : 'fa-comment-sms'}"></i>
+      <div class="txt">${n.message}<div class="time">${n.time}</div></div>
+    </div>
+  `).join('');
+}
+
+function toggleBell(){
+  const panel = document.getElementById('bellPanel');
+  panel.classList.toggle('open');
+  document.getElementById('bellDot').classList.remove('show');
+}
+document.addEventListener('click', (e)=>{
+  const wrap = document.querySelector('.bell-wrap');
+  if(!wrap.contains(e.target)) document.getElementById('bellPanel').classList.remove('open');
+});
+
+// set min datetime to now
+const dtInput = document.getElementById('bookingTime');
+const now = new Date();
+now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+dtInput.min = now.toISOString().slice(0,16);
+
+loadCsrf();
+loadDashboard();
+loadSlots();
+loadMyBookings();
+loadNotifications();
+updatePrice();
+setInterval(()=>{ loadDashboard(); loadSlots(); }, 15000);
+</script>
+</body>
+</html>

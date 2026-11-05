@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login | ParkVerse</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+:root{
+  --bg:#080b14;
+  --card:#131a2c;
+  --card-bd:rgba(255,255,255,.08);
+  --primary:#ff9f43;
+  --primary2:#ff5c72;
+  --accent:#2ee6a6;
+  --danger:#ff5c72;
+  --text:#eef1f8;
+  --muted:#8a93ab;
+  --radius:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;padding:20px}
+.glow{position:fixed;border-radius:50%;filter:blur(130px);opacity:.3;z-index:0}
+.glow1{width:480px;height:480px;background:var(--primary);top:-140px;left:-140px}
+.glow2{width:480px;height:480px;background:var(--primary2);bottom:-140px;right:-140px}
+
+.back-link{position:fixed;top:22px;left:26px;color:var(--muted);text-decoration:none;font-size:14px;display:flex;align-items:center;gap:6px;z-index:2}
+.back-link:hover{color:var(--primary)}
+
+.card{
+  position:relative;z-index:1;width:100%;max-width:380px;
+  background:var(--card);border:1px solid var(--card-bd);border-radius:var(--radius);
+  padding:34px 30px;backdrop-filter:blur(16px);box-shadow:0 25px 60px rgba(0,0,0,.45);
+  animation:popup .5s ease;
+}
+@keyframes popup{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.brand{display:flex;align-items:center;justify-content:center;gap:8px;font-size:20px;font-weight:700}
+.brand i{color:var(--primary)}
+.brand span{background:linear-gradient(90deg,var(--primary),var(--primary2));-webkit-background-clip:text;background-clip:text;color:transparent}
+h1{text-align:center;font-size:22px;margin:10px 0 4px}
+.sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:22px}
+
+.field{position:relative;margin-bottom:16px}
+.field i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px}
+.field input{
+  width:100%;padding:13px 14px 13px 40px;border-radius:10px;border:1px solid var(--card-bd);
+  background:#0d1424;color:var(--text);outline:none;font-size:14px;transition:.25s;
+}
+.field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(255,159,67,.12)}
+
+button.submit{
+  width:100%;padding:14px;border:none;border-radius:10px;cursor:pointer;
+  background:linear-gradient(90deg,var(--primary),var(--primary2));color:#fff;
+  font-size:15px;font-weight:600;transition:.3s;box-shadow:0 10px 24px rgba(255,92,114,.3);
+}
+button.submit:hover{transform:translateY(-2px)}
+button.submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.msg{margin-top:14px;text-align:center;font-size:13.5px;font-weight:600;min-height:18px}
+.msg.ok{color:var(--accent)}
+.msg.err{color:var(--danger)}
+.hint-box{margin-top:18px;background:#0d1424;border:1px dashed var(--card-bd);border-radius:10px;padding:10px 12px;font-size:11.5px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+
+<div class="glow glow1"></div>
+<div class="glow glow2"></div>
+<a href="/" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+
+<div class="card">
+<div class="brand"><i class="fa-solid fa-user-shield"></i><span>ParkVerse Admin</span></div>
+<h1>Admin Console</h1>
+<p class="sub">Restricted access — for parking operators only</p>
+
+<div class="field">
+<i class="fa-solid fa-envelope"></i>
+<input type="email" id="email" placeholder="Admin Email">
+</div>
+
+<div class="field">
+<i class="fa-solid fa-lock"></i>
+<input type="password" id="password" placeholder="Password">
+</div>
+
+<button class="submit" id="loginBtn" onclick="doAdminLogin()">Login to Console</button>
+<div class="msg" id="loginMsg"></div>
+
+<div class="hint-box">Demo credentials: admin@parkverse.com / admin123</div>
+</div>
+
+<script>
+let csrfToken = '';
+async function loadCsrf(){
+  try{
+    const res = await fetch('/api/csrf-token');
+    const data = await res.json();
+    csrfToken = data.csrf_token;
+  }catch(e){}
+}
+loadCsrf();
+
+async function doAdminLogin(){
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const msg = document.getElementById('loginMsg');
+  const btn = document.getElementById('loginBtn');
+
+  msg.className = 'msg';
+  msg.textContent = '';
+
+  if(!email || !password){
+    msg.textContent = 'Please fill in all fields';
+    msg.classList.add('err');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Verifying...';
+
+  try{
+    const res = await fetch('/api/admin-login', {
+      method:'POST',
+      headers:{'Content-Type':'application/json', 'X-CSRFToken': csrfToken},
+      body: JSON.stringify({email, password})
+    });
+    const data = await res.json();
+
+    if(data.success){
+      msg.textContent = 'Access granted. Redirecting...';
+      msg.classList.add('ok');
+      setTimeout(()=> window.location.href = data.redirect || '/admin', 600);
+    }else{
+      msg.textContent = data.message || 'Login failed';
+      msg.classList.add('err');
+      btn.disabled = false;
+      btn.textContent = 'Login to Console';
+    }
+  }catch(e){
+    msg.textContent = 'Something went wrong. Try again.';
+    msg.classList.add('err');
+    btn.disabled = false;
+    btn.textContent = 'Login to Console';
+  }
+}
+
+document.getElementById('password').addEventListener('keydown', e=>{
+  if(e.key === 'Enter') doAdminLogin();
+});
+</script>
+</body>
+</html>

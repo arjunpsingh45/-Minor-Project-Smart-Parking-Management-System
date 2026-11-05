@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign Up | ParkVerse</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+:root{
+  --bg:#080b14;
+  --card:#131a2c;
+  --card-bd:rgba(255,255,255,.08);
+  --primary:#7c5cff;
+  --primary2:#22d3ee;
+  --accent:#2ee6a6;
+  --danger:#ff5c72;
+  --text:#eef1f8;
+  --muted:#8a93ab;
+  --radius:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+body{
+  background:var(--bg);color:var(--text);min-height:100vh;
+  display:flex;align-items:center;justify-content:center;position:relative;padding:30px 20px;
+}
+.glow{position:fixed;border-radius:50%;filter:blur(130px);opacity:.35;z-index:0}
+.glow1{width:480px;height:480px;background:var(--primary);top:-140px;left:-140px}
+.glow2{width:480px;height:480px;background:var(--primary2);bottom:-140px;right:-140px}
+
+.back-link{position:fixed;top:22px;left:26px;color:var(--muted);text-decoration:none;font-size:14px;display:flex;align-items:center;gap:6px;z-index:2;transition:.25s}
+.back-link:hover{color:var(--primary2)}
+
+.card{
+  position:relative;z-index:1;width:100%;max-width:460px;
+  background:var(--card);border:1px solid var(--card-bd);border-radius:var(--radius);
+  padding:32px 30px;backdrop-filter:blur(16px);
+  box-shadow:0 25px 60px rgba(0,0,0,.45);
+  animation:popup .5s ease;
+}
+@keyframes popup{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.brand{display:flex;align-items:center;justify-content:center;gap:8px;font-size:20px;font-weight:700}
+.brand i{color:var(--primary2)}
+.brand span{background:linear-gradient(90deg,var(--primary),var(--primary2));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+h1{text-align:center;font-size:23px;margin:8px 0 4px}
+.sub{text-align:center;color:var(--muted);font-size:13.5px;margin-bottom:22px}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+.field{position:relative;margin-bottom:14px}
+.field i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13.5px}
+.field input, .field select{
+  width:100%;padding:12px 14px 12px 40px;border-radius:10px;
+  border:1px solid var(--card-bd);background:#0d1424;color:var(--text);
+  outline:none;font-size:13.5px;transition:.25s;appearance:none;
+}
+.field select{padding-left:40px}
+.field input:focus, .field select:focus{border-color:var(--primary2);box-shadow:0 0 0 3px rgba(34,211,238,.12)}
+.field input::placeholder{color:var(--muted)}
+.field .hint{font-size:11px;color:var(--muted);margin-top:4px;margin-left:2px}
+.field .hint.err{color:var(--danger)}
+.field .hint.ok{color:var(--accent)}
+.toggle-eye{position:absolute;right:14px;top:14px;color:var(--muted);cursor:pointer;font-size:13.5px}
+.field select + i.fa-chevron-down{left:auto;right:14px;pointer-events:none}
+
+button.submit{
+  width:100%;padding:14px;border:none;border-radius:10px;cursor:pointer;margin-top:4px;
+  background:linear-gradient(90deg,var(--primary),var(--primary2));color:#fff;
+  font-size:15px;font-weight:600;transition:.3s;box-shadow:0 10px 24px rgba(124,92,255,.35);
+}
+button.submit:hover{transform:translateY(-2px)}
+button.submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
+
+.msg{margin-top:14px;text-align:center;font-size:13.5px;font-weight:600;min-height:18px}
+.msg.ok{color:var(--accent)}
+.msg.err{color:var(--danger)}
+
+.bottom-text{text-align:center;margin-top:18px;color:var(--muted);font-size:13.5px}
+.bottom-text a{color:var(--primary2);text-decoration:none;font-weight:600}
+.bottom-text a:hover{text-decoration:underline}
+
+@media(max-width:480px){.two-col{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="glow glow1"></div>
+<div class="glow glow2"></div>
+
+<a href="/" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+
+<div class="card">
+<div class="brand"><i class="fa-solid fa-square-parking"></i><span>ParkVerse</span></div>
+<h1>Create Your Account</h1>
+<p class="sub">Sign up to start booking smart parking slots</p>
+
+<div class="field">
+<i class="fa-solid fa-user"></i>
+<input type="text" id="name" placeholder="Full Name">
+</div>
+
+<div class="field">
+<i class="fa-solid fa-envelope"></i>
+<input type="email" id="email" placeholder="Email Address">
+</div>
+
+<div class="two-col">
+<div class="field">
+<i class="fa-solid fa-mobile-screen"></i>
+<input type="tel" id="mobile" placeholder="Mobile Number" maxlength="10" inputmode="numeric">
+<div class="hint" id="mobileHint">10 digit mobile number</div>
+</div>
+
+<div class="field">
+<i class="fa-solid fa-car"></i>
+<input type="text" id="carNum" placeholder="Car Number" style="text-transform:uppercase">
+<div class="hint">e.g. HR26AB1234</div>
+</div>
+</div>
+
+<div class="field">
+<i class="fa-solid fa-car-side"></i>
+<select id="vehicleClass">
+<option value="Car" selected>Car</option>
+<option value="Bike">Bike</option>
+<option value="SUV">SUV</option>
+<option value="Electric Vehicle">Electric Vehicle</option>
+<option value="Truck">Truck</option>
+</select>
+<i class="fa-solid fa-chevron-down"></i>
+</div>
+
+<div class="field">
+<i class="fa-solid fa-lock"></i>
+<input type="password" id="password" placeholder="Create Password">
+<i class="fa-solid fa-eye toggle-eye" onclick="togglePass('password',this)"></i>
+</div>
+
+<div class="field">
+<i class="fa-solid fa-lock"></i>
+<input type="password" id="confirmPassword" placeholder="Confirm Password">
+<i class="fa-solid fa-eye toggle-eye" onclick="togglePass('confirmPassword',this)"></i>
+</div>
+
+<button class="submit" id="signupBtn" onclick="doSignup()">Create Account</button>
+
+<div class="msg" id="signupMsg"></div>
+
+<p class="bottom-text">Already have an account? <a href="/login">Login</a></p>
+</div>
+
+<script>
+let csrfToken = '';
+async function loadCsrf(){
+  try{
+    const res = await fetch('/api/csrf-token');
+    const data = await res.json();
+    csrfToken = data.csrf_token;
+  }catch(e){ /* non-fatal */ }
+}
+loadCsrf();
+
+function togglePass(id, el){
+  const inp = document.getElementById(id);
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  el.classList.toggle('fa-eye');
+  el.classList.toggle('fa-eye-slash');
+}
+
+const mobileInput = document.getElementById('mobile');
+mobileInput.addEventListener('input', function(){
+  this.value = this.value.replace(/\D/g,'').slice(0,10);
+  const hint = document.getElementById('mobileHint');
+  if(this.value.length === 10){
+    hint.textContent = 'Looks good';
+    hint.className = 'hint ok';
+  }else{
+    hint.textContent = `${this.value.length}/10 digits`;
+    hint.className = 'hint';
+  }
+});
+
+document.getElementById('carNum').addEventListener('input', function(){
+  this.value = this.value.toUpperCase();
+});
+
+async function doSignup(){
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const mobile = document.getElementById('mobile').value.trim();
+  const carNum = document.getElementById('carNum').value.trim();
+  const vehicleClass = document.getElementById('vehicleClass').value;
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirmPassword').value;
+
+  const msg = document.getElementById('signupMsg');
+  const btn = document.getElementById('signupBtn');
+  msg.className = 'msg';
+  msg.textContent = '';
+
+  if(!name || !email || !mobile || !carNum || !password || !confirmPassword){
+    msg.textContent = 'Please fill in all fields';
+    msg.classList.add('err');
+    return;
+  }
+
+  if(!/^\d{10}$/.test(mobile)){
+    msg.textContent = 'Mobile number must be exactly 10 digits';
+    msg.classList.add('err');
+    return;
+  }
+
+  if(password.length < 6){
+    msg.textContent = 'Password must be at least 6 characters';
+    msg.classList.add('err');
+    return;
+  }
+
+  if(password !== confirmPassword){
+    msg.textContent = 'Passwords do not match';
+    msg.classList.add('err');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Creating Account...';
+
+  try{
+    const res = await fetch('/api/signup', {
+      method:'POST',
+      headers:{'Content-Type':'application/json', 'X-CSRFToken': csrfToken},
+      body: JSON.stringify({name, email, mobile, carNum, vehicleClass, password})
+    });
+    const data = await res.json();
+
+    if(data.success){
+      msg.textContent = data.message + ' Redirecting to login...';
+      msg.classList.add('ok');
+      setTimeout(()=> window.location.href = '/login', 900);
+    }else{
+      msg.textContent = data.message || 'Registration failed';
+      msg.classList.add('err');
+      btn.disabled = false;
+      btn.textContent = 'Create Account';
+    }
+  }catch(e){
+    msg.textContent = 'Something went wrong. Try again.';
+    msg.classList.add('err');
+    btn.disabled = false;
+    btn.textContent = 'Create Account';
+  }
+}
+</script>
+</body>
+</html>
